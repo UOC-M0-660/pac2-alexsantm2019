@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">PAC2</string>
+    <string name="title_book_detail">Book Detail</string>
+    <string name="auth_failed">Error connectando con Firebase</string>
+    <string name="image">Image</string>
+    <string name="share_info">Share to other apps</string>
+
+    <string name="book_not_found">Book not found</string>
+</resources>
