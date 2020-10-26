@@ -1,6 +1,7 @@
 package edu.uoc.pac2.ui
 
 import android.content.Context
+import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -51,13 +52,7 @@ class BookListActivity : AppCompatActivity() {
 
     //Funcion para configurar Admob
     private fun loadAdMob(){
-//        val testId = Arrays.asList()
-//        val configuration =  RequestConfiguration.Builder().setTestDeviceIds(testId).build()
-//        MobileAds.setRequestConfiguration(configuration)
-//        RequestConfiguration.Builder.set(testId)
-
         MobileAds.initialize(this) {}
-
         mAdView = findViewById(R.id.adView)
         val adRequest = AdRequest.Builder().build()
         mAdView.loadAd(adRequest)
@@ -87,13 +82,12 @@ class BookListActivity : AppCompatActivity() {
         // Añado metodo para leer datos desde Firestore, usando la opcion de escuchar cambios en la BDD
 
         var myApp = this.application as MyApplication
-        //var bookInteractor = myApp.getBooksInteractor()
 
         //1. Muestro los datos en local
         loadBooksFromLocalDb()
 
         // 2. Reviso si hay internet y leo datos desde Firestore
-        if (myApp.isConnectingToInternet(context)) {
+        if (myApp.hasInternetConnection()) {
             loadBooksFromFirestoreAndSaveInLocal()        // Cargo datos desde Firestore
         }
     }
@@ -118,21 +112,20 @@ class BookListActivity : AppCompatActivity() {
 
     // TODO: Load Books from Room
     private fun loadBooksFromLocalDb() {
-        val books = (application as MyApplication).getBooksInteractor().getAllBooks()
-        adapter.setBooks(books)
+        AsyncTask.execute {
+            val books = (application as MyApplication).getBooksInteractor().getAllBooks()
+            adapter.setBooks(books)
+        }
 
-//        val bookInteractor = (application as MyApplication).getBooksInteractor()
-//        val books: List<Book> = bookInteractor.getAllBooks()
-//        adapter.setBooks(books)
     }
 
     // TODO: Save Books to Local Storage
     private fun saveBooksToLocalDatabase(books: List<Book>) {
-        //(application as MyApplication).getBooksInteractor().saveBooks(books)
-
-        val bookInteractor = (application as MyApplication).getBooksInteractor()
-        bookInteractor.saveBooks(books)
-        adapter.setBooks(books)
+        AsyncTask.execute {
+            val bookInteractor = (application as MyApplication).getBooksInteractor()
+            bookInteractor.saveBooks(books)
+            adapter.setBooks(books)
+        }
     }
 
 }

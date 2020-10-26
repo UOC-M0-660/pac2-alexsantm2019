@@ -76,7 +76,6 @@ class BooksListAdapter(private var books: List<Book>) : RecyclerView.Adapter<Boo
         }
     }
 
-
     private val mOnClickListener: View.OnClickListener
 
     init {

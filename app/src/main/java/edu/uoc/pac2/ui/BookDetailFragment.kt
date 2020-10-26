@@ -2,6 +2,7 @@ package edu.uoc.pac2.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -43,21 +44,30 @@ class BookDetailFragment : Fragment() {
 
         arguments?.let {
             val bookId = it.getInt(ARG_ITEM_ID)
-            val book = (activity!!.application as MyApplication).getBooksInteractor().getBookById(bookId)
-            if (book != null){
-                initUI(book)
-                book?.let {
 
-                    // Coloco titulo de libro en la barra
-                    activity?.toolbar_layout?.title = it.title
+            //AsyncTask.execute {
+                val book = (activity!!.application as MyApplication).getBooksInteractor().getBookById(bookId)
 
-                    // Activo acciòn de boton SHARE
-                    activity?.findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener {
-                        shareContent(book)
+                if (book != null){
+                   activity?.runOnUiThread {
+                        initUI(book)
+                   }
+
+                    book?.let {
+
+                        // Coloco titulo de libro en la barra
+                        activity?.toolbar_layout?.title = it.title
+
+                        // Activo acciòn de boton SHARE
+                        activity?.findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener {
+                            shareContent(book)
+                        }
+
                     }
-
                 }
-            }
+            //}
+
+
         }
     }
 
@@ -87,6 +97,8 @@ class BookDetailFragment : Fragment() {
             putExtra(Intent.EXTRA_TEXT, book.urlImage)
             type = "text/plain"
         }
+        //val shareIntent = Intent.createChooser(sendIntent, null)
+        //startActivity(shareIntent)
         startActivity(sendIntent)
     }
 
