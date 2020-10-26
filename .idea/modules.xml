@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/PAC2.iml" filepath="$PROJECT_DIR$/.idea/modules/PAC2.iml" group="PAC2" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="PAC2/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/pac2-alexsantm.iml" filepath="$PROJECT_DIR$/.idea/modules/pac2-alexsantm.iml" group="pac2-alexsantm" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/pac2-alexsantm-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/pac2-alexsantm-app.iml" group="pac2-alexsantm/app" />
     </modules>
   </component>
 </project>

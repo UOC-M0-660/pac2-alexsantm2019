@@ -1,5 +1,11 @@
 package edu.uoc.pac2.data
 
+import android.content.Context
+import androidx.lifecycle.LiveData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+
 /**
  * This class Interacts with {@param bookDao} to perform operations in the local database.
  *
@@ -31,3 +37,4 @@ class BooksInteractor(private val bookDao: BookDao) {
     }
 
 }
+

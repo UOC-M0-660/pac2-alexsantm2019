@@ -3,6 +3,7 @@
     package="edu.uoc.pac2">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".MyApplication"
@@ -10,6 +11,13 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+<!--        <meta-data-->
+<!--            android:name="com.google.android.gms.ads.AD_MANAGER_APP"-->
+<!--            android:value="true"/>-->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-5219733532594481~5102701602"/>
+
         <activity
             android:name="edu.uoc.pac2.ui.BookListActivity"
             android:label="@string/app_name">
