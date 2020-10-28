@@ -127,8 +127,10 @@ class BookDetailFragment : Fragment() {
 
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_SUBJECT, book.title)
-            putExtra(Intent.EXTRA_TEXT, book.urlImage)
+            //putExtra(Intent.EXTRA_SUBJECT, book.title)
+            //putExtra(Intent.EXTRA_TEXT, book.urlImage)
+            //putExtra(Intent.EXTRA_TEXT, "Check out this awesome book: ${book.title} ${book.urlImage}")
+            putExtra(Intent.EXTRA_TEXT, "Titulo: ${book?.title}, imagen: ${book?.urlImage}")
             type = "text/plain"
         }
         val shareIntent = Intent.createChooser(sendIntent, null)
