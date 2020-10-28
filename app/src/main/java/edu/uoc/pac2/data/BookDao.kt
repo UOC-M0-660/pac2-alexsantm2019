@@ -23,10 +23,5 @@ interface BookDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveBook(book: Book): Long
-    //fun saveBooks(books: List<Book>)
-    //fun saveBook(book: Book)
-
-//    @Insert(onConflict = OnConflictStrategy.REPLACE)
-//    fun saveBooks(books: List<Book>): Long
 
 }

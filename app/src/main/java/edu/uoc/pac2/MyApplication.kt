@@ -22,10 +22,11 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        // Init Room Database
-        val appBook = Room.databaseBuilder(this, ApplicationDatabase::class.java, "book.db").allowMainThreadQueries().build()
+        // TODO: Init Room Database
+        //val appBook = Room.databaseBuilder(this, ApplicationDatabase::class.java, "book.db").allowMainThreadQueries().build()
+        val appBook = Room.databaseBuilder(this, ApplicationDatabase::class.java, "book.db").build()
 
-        // Init BooksInteractor
+        // TODO: Init BooksInteractor
         booksInteractor = BooksInteractor(appBook.bookDao())
     }
 

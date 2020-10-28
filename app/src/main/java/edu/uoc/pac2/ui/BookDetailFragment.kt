@@ -28,6 +28,8 @@ import java.lang.reflect.Array.get
  */
 class BookDetailFragment : Fragment() {
 
+    private var myBook: Book? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_book_detail, container, false)
     }
@@ -42,33 +44,65 @@ class BookDetailFragment : Fragment() {
     // TODO: Get Book for the given {@param ARG_ITEM_ID} Book id
     private fun loadBook() {
 
-        arguments?.let {
-            val bookId = it.getInt(ARG_ITEM_ID)
-
-            //AsyncTask.execute {
-                val book = (activity!!.application as MyApplication).getBooksInteractor().getBookById(bookId)
-
-                if (book != null){
-                   activity?.runOnUiThread {
-                        initUI(book)
-                   }
-
-                    book?.let {
+        class LoadBook: AsyncTask<Void, Void, Void>() {
+            // Background query to Room DB
+            override fun doInBackground(vararg params: Void?): Void? {
+                val myApp = activity?.application as MyApplication
+                val booksInteractor = myApp.getBooksInteractor()
+                arguments?.let {
+                    if (it.containsKey(ARG_ITEM_ID)) {
+                        myBook = booksInteractor.getBookById(it.getInt(ARG_ITEM_ID))
 
                         // Coloco titulo de libro en la barra
-                        activity?.toolbar_layout?.title = it.title
+                            activity?.toolbar_layout?.title = myBook?.title
 
                         // Activo acciòn de boton SHARE
-                        activity?.findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener {
-                            shareContent(book)
-                        }
-
+                            activity?.findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener {
+                                shareContent(myBook!!)
+                            }
                     }
                 }
-            //}
+                return null
+            }
 
-
+            // Task callback, will be executed on main thread
+            override fun onPostExecute(result: Void?) {
+                myBook?.let { initUI(it) }
+            }
         }
+        LoadBook().execute()
+
+           //  AsyncTask.execute  {
+
+//                arguments?.let {
+//                    val bookId = it.getInt(ARG_ITEM_ID)
+//
+//                    val book = (activity!!.application as MyApplication).getBooksInteractor().getBookById(bookId)
+//
+//                    if (book != null){
+//                       //activity?.runOnUiThread {
+//                            initUI(book)
+//                      // }
+//
+//                        book?.let {
+//
+//                            // Coloco titulo de libro en la barra
+//                            activity?.toolbar_layout?.title = it.title
+//
+//                            // Activo acciòn de boton SHARE
+//                            activity?.findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener {
+//                                shareContent(book)
+//                            }
+//
+//                        }
+//                    }
+//                }
+
+
+           // }
+
+
+
     }
 
     // TODO: Init UI with book details
@@ -88,7 +122,7 @@ class BookDetailFragment : Fragment() {
                 .into(imageView)
     }
 
-//    // TODO: Share Book Title and Image URL
+    // TODO: Share Book Title and Image URL
     private fun shareContent(book: Book) {
 
         val sendIntent: Intent = Intent().apply {
@@ -97,9 +131,8 @@ class BookDetailFragment : Fragment() {
             putExtra(Intent.EXTRA_TEXT, book.urlImage)
             type = "text/plain"
         }
-        //val shareIntent = Intent.createChooser(sendIntent, null)
-        //startActivity(shareIntent)
-        startActivity(sendIntent)
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
     }
 
     companion object {

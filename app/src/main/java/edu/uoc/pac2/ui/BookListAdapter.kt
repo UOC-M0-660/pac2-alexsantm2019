@@ -19,10 +19,24 @@ import java.lang.String
  * Adapter for a list of Books.
  */
 
-class BooksListAdapter(private var books: List<Book>) : RecyclerView.Adapter<BooksListAdapter.ViewHolder>() {
+//class BooksListAdapter(private var books: List<Book>) : RecyclerView.Adapter<BooksListAdapter.ViewHolder>() {
+class BooksListAdapter(private var books: List<Book>, private val clickListener: (item: Book)  -> Unit) :
+            RecyclerView.Adapter<BooksListAdapter.ViewHolder>() {
 
     private val evenViewType = 0
     private val oddViewType = 1
+
+
+//    private val clickListener: (item:Book) -> Unit
+//
+//    init {
+//        mOnClickListener = View.OnClickListener { v ->
+//
+//        }
+//    }
+
+
+
 
     private fun getBook(position: Int): Book {
         return books[position]
@@ -68,28 +82,31 @@ class BooksListAdapter(private var books: List<Book>) : RecyclerView.Adapter<Boo
         holder.authorView.text = book.author
 
         // TODO: Set View Click Listener
+        holder.view.setOnClickListener { clickListener(book) }      // Envio clickListener como parametro a BookListActivity
 
-        val item = books[position]
-        with(holder.itemView) {
-            tag = item
-            setOnClickListener(mOnClickListener)
-        }
+
+//        val item = books[position]
+//        with(holder.itemView) {
+//            tag = item
+//            setOnClickListener(mOnClickListener)
+//        }
+
+
     }
 
-    private val mOnClickListener: View.OnClickListener
-
-    init {
-        mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as Book
-            val intent = Intent(v.context, BookDetailActivity::class.java).apply {
-                putExtra(BookDetailFragment.ARG_ITEM_ID, item.uid)
-            }
-            v.context.startActivity(intent)
-
-            // Animacion al momento de desplegar detalle del libro
-            (v.context as BookListActivity).overridePendingTransition(R.anim.translate_in_bottom, R.anim.translate_out_bottom)
-        }
-    }
+//    private val mOnClickListener: View.OnClickListener
+//    init {
+//        mOnClickListener = View.OnClickListener { v ->
+//            val item = v.tag as Book
+//            val intent = Intent(v.context, BookDetailActivity::class.java).apply {
+//                putExtra(BookDetailFragment.ARG_ITEM_ID, item.uid)
+//            }
+//            v.context.startActivity(intent)
+//
+//            // Animacion al momento de desplegar detalle del libro
+//            (v.context as BookListActivity).overridePendingTransition(R.anim.translate_in_bottom, R.anim.translate_out_bottom)
+//        }
+//    }
 
     // Returns total items in Adapter
     override fun getItemCount(): Int {

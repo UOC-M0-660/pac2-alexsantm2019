@@ -1,6 +1,7 @@
 package edu.uoc.pac2.ui
 
 import android.content.Context
+import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +18,7 @@ import edu.uoc.pac2.MyApplication
 import edu.uoc.pac2.R
 import edu.uoc.pac2.data.Book
 import kotlinx.android.synthetic.main.activity_book_list.*
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 /**
@@ -71,9 +73,24 @@ class BookListActivity : AppCompatActivity() {
         // Set Layout Manager
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
+
         // Init Adapter
-        adapter = BooksListAdapter(emptyList())
+        // adapter = BooksListAdapter(emptyList())
+        adapter = BooksListAdapter(emptyList()) { item -> clickBookDetail(item) }       // Recibo parametro clickListener desde BookListAdapter
+
+
         recyclerView.adapter = adapter
+    }
+
+    // Recibido el parametro desde BookListAdapter, construyo funcion para mostrar detalle de libro
+    fun clickBookDetail(item: Book) {
+        val intent = Intent(this, BookDetailActivity::class.java).apply {
+            putExtra(BookDetailFragment.ARG_ITEM_ID, item.uid)
+        }
+        startActivity(intent)
+
+        // Animacion se lanza al momento de mostrar detalle de Libro
+        overridePendingTransition(R.anim.translate_in_bottom, R.anim.translate_out_bottom)
     }
 
     // TODO: Get Books and Update UI
@@ -112,20 +129,76 @@ class BookListActivity : AppCompatActivity() {
 
     // TODO: Load Books from Room
     private fun loadBooksFromLocalDb() {
-        AsyncTask.execute {
-            val books = (application as MyApplication).getBooksInteractor().getAllBooks()
-            adapter.setBooks(books)
+//        AsyncTask.execute {
+//            val books = (application as MyApplication).getBooksInteractor().getAllBooks()
+//            adapter.setBooks(books)
+//        }
+
+        var books: List<Book> = ArrayList()
+
+        class LoadBooks: AsyncTask<Void, Void, Void>() {
+            // Background query to Room DB
+            override fun doInBackground(vararg params: Void?): Void? {
+                books = (application as MyApplication).getBooksInteractor().getAllBooks()
+
+                return null
+            }
+
+            // Task callback, will be executed on main thread
+            override fun onPostExecute(result: Void?) {
+                super.onPostExecute(result)
+                adapter.setBooks(books)
+            }
         }
+        LoadBooks().execute()
+
+//        runBlocking {
+//            val books = (application as MyApplication).getBooksInteractor().getAllBooks()
+//            adapter.setBooks(books)
+//        }
+
+//        runOnUiThread(Runnable {
+//            val books = (application as MyApplication).getBooksInteractor().getAllBooks()
+//            adapter.setBooks(books)
+//        })
 
     }
 
     // TODO: Save Books to Local Storage
     private fun saveBooksToLocalDatabase(books: List<Book>) {
-        AsyncTask.execute {
-            val bookInteractor = (application as MyApplication).getBooksInteractor()
-            bookInteractor.saveBooks(books)
-            adapter.setBooks(books)
+//        AsyncTask.execute {
+//            val bookInteractor = (application as MyApplication).getBooksInteractor()
+//            bookInteractor.saveBooks(books)
+//            adapter.setBooks(books)
+//        }
+
+
+        class SaveBooks: AsyncTask<Void, Void, Void>() {
+            // Background query to Room DB
+            override fun doInBackground(vararg params: Void?): Void? {
+                val bookInteractor = (application as MyApplication).getBooksInteractor()
+                bookInteractor.saveBooks(books)
+                return null
+            }
+
+            // Task callback, will be executed on main thread
+            override fun onPostExecute(result: Void?) {
+                super.onPostExecute(result)
+                adapter.setBooks(books)
+            }
         }
+        SaveBooks().execute()
+
+//        runBlocking {
+//            val bookInteractor = (application as MyApplication).getBooksInteractor()
+//            bookInteractor.saveBooks(books)
+//            adapter.setBooks(books)
+//        }
+//        runOnUiThread {
+//            val bookInteractor = (application as MyApplication).getBooksInteractor()
+//            bookInteractor.saveBooks(books)
+//            adapter.setBooks(books)
+//        }
     }
 
 }
