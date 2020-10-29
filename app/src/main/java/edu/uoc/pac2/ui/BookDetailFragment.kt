@@ -44,29 +44,33 @@ class BookDetailFragment : Fragment() {
     // TODO: Get Book for the given {@param ARG_ITEM_ID} Book id
     private fun loadBook() {
 
-             AsyncTask.execute  {
+        // Tarea asincronas
+        class loadBook: AsyncTask<Void, Void, Void>() {
+            override fun doInBackground(vararg params: Void?): Void? {
+                val myApp = activity?.application as MyApplication
+                val booksInteractor = myApp.getBooksInteractor()
                 arguments?.let {
-                    val bookId = it.getInt(ARG_ITEM_ID)
-                    val book = (activity!!.application as MyApplication).getBooksInteractor().getBookById(bookId)
-                    if (book != null){
+                    if (it.containsKey(ARG_ITEM_ID)) {
+                        myBook = booksInteractor.getBookById(it.getInt(ARG_ITEM_ID))
 
-                        // Retorno a Thread principal
-                       activity?.runOnUiThread {
-                            initUI(book)
-                       }
-                        book?.let {
-                            // Coloco titulo de libro en la barra
-                            activity?.toolbar_layout?.title = it.title
+                        // Coloco titulo de libro en la barra
+                            activity?.toolbar_layout?.title = myBook?.title
 
-                            // Activo acciòn de boton SHARE
+                        // Activo acciòn de boton SHARE
                             activity?.findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener {
-                                shareContent(book)
+                                shareContent(myBook!!)
                             }
-
-                        }
                     }
                 }
+                return null
             }
+
+            // Ejecuto en main thread
+            override fun onPostExecute(result: Void?) {
+                myBook?.let { initUI(it) }
+            }
+        }
+        loadBook().execute()
     }
 
     // TODO: Init UI with book details

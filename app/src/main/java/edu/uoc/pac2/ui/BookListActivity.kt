@@ -76,6 +76,8 @@ class BookListActivity : AppCompatActivity() {
 
         // Init Adapter
         adapter = BooksListAdapter(emptyList()) { item -> clickBookDetail(item) }       // Recibo parametro clickListener desde BookListAdapter
+
+
         recyclerView.adapter = adapter
     }
 
@@ -126,21 +128,42 @@ class BookListActivity : AppCompatActivity() {
 
     // TODO: Load Books from Room
     private fun loadBooksFromLocalDb() {
-        // Tarea asíncrona
-        AsyncTask.execute {
-            val books = (application as MyApplication).getBooksInteractor().getAllBooks()
-            adapter.setBooks(books)
+        var books: List<Book> = ArrayList()
+        // Tarea asincronas
+        class loadBooksFromLocalDb: AsyncTask<Void, Void, Void>() {
+            override fun doInBackground(vararg params: Void?): Void? {
+                books = (application as MyApplication).getBooksInteractor().getAllBooks()
+                return null
+            }
+
+            // Ejecuto en main thread
+            override fun onPostExecute(result: Void?) {
+                super.onPostExecute(result)
+                adapter.setBooks(books)
+            }
         }
+        loadBooksFromLocalDb().execute()
     }
 
     // TODO: Save Books to Local Storage
     private fun saveBooksToLocalDatabase(books: List<Book>) {
-        // Tarea asíncrona
-        AsyncTask.execute {
-            val bookInteractor = (application as MyApplication).getBooksInteractor()
-            bookInteractor.saveBooks(books)
-            adapter.setBooks(books)
+
+        // Tarea asincronas
+        class saveBooksToLocalDatabase: AsyncTask<Void, Void, Void>() {
+            override fun doInBackground(vararg params: Void?): Void? {
+                val bookInteractor = (application as MyApplication).getBooksInteractor()
+                bookInteractor.saveBooks(books)
+                return null
+            }
+
+            // Ejecuto en main thread
+            override fun onPostExecute(result: Void?) {
+                super.onPostExecute(result)
+                adapter.setBooks(books)
+            }
         }
+        saveBooksToLocalDatabase().execute()
+
     }
 
 }
