@@ -44,65 +44,29 @@ class BookDetailFragment : Fragment() {
     // TODO: Get Book for the given {@param ARG_ITEM_ID} Book id
     private fun loadBook() {
 
-        class LoadBook: AsyncTask<Void, Void, Void>() {
-            // Background query to Room DB
-            override fun doInBackground(vararg params: Void?): Void? {
-                val myApp = activity?.application as MyApplication
-                val booksInteractor = myApp.getBooksInteractor()
+             AsyncTask.execute  {
                 arguments?.let {
-                    if (it.containsKey(ARG_ITEM_ID)) {
-                        myBook = booksInteractor.getBookById(it.getInt(ARG_ITEM_ID))
+                    val bookId = it.getInt(ARG_ITEM_ID)
+                    val book = (activity!!.application as MyApplication).getBooksInteractor().getBookById(bookId)
+                    if (book != null){
 
-                        // Coloco titulo de libro en la barra
-                            activity?.toolbar_layout?.title = myBook?.title
+                        // Retorno a Thread principal
+                       activity?.runOnUiThread {
+                            initUI(book)
+                       }
+                        book?.let {
+                            // Coloco titulo de libro en la barra
+                            activity?.toolbar_layout?.title = it.title
 
-                        // Activo acciòn de boton SHARE
+                            // Activo acciòn de boton SHARE
                             activity?.findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener {
-                                shareContent(myBook!!)
+                                shareContent(book)
                             }
+
+                        }
                     }
                 }
-                return null
             }
-
-            // Task callback, will be executed on main thread
-            override fun onPostExecute(result: Void?) {
-                myBook?.let { initUI(it) }
-            }
-        }
-        LoadBook().execute()
-
-           //  AsyncTask.execute  {
-
-//                arguments?.let {
-//                    val bookId = it.getInt(ARG_ITEM_ID)
-//
-//                    val book = (activity!!.application as MyApplication).getBooksInteractor().getBookById(bookId)
-//
-//                    if (book != null){
-//                       //activity?.runOnUiThread {
-//                            initUI(book)
-//                      // }
-//
-//                        book?.let {
-//
-//                            // Coloco titulo de libro en la barra
-//                            activity?.toolbar_layout?.title = it.title
-//
-//                            // Activo acciòn de boton SHARE
-//                            activity?.findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener {
-//                                shareContent(book)
-//                            }
-//
-//                        }
-//                    }
-//                }
-
-
-           // }
-
-
-
     }
 
     // TODO: Init UI with book details
@@ -127,9 +91,6 @@ class BookDetailFragment : Fragment() {
 
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
-            //putExtra(Intent.EXTRA_SUBJECT, book.title)
-            //putExtra(Intent.EXTRA_TEXT, book.urlImage)
-            //putExtra(Intent.EXTRA_TEXT, "Check out this awesome book: ${book.title} ${book.urlImage}")
             putExtra(Intent.EXTRA_TEXT, "Titulo: ${book?.title}, imagen: ${book?.urlImage}")
             type = "text/plain"
         }
