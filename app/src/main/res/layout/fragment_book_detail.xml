@@ -26,11 +26,17 @@
             android:layout_height="wrap_content"
             android:text="12/24/14"/>
 
-        <TextView
-            android:id="@+id/book_detail"
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Description" />
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/book_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description" />
+
+        </ScrollView>
 
     </LinearLayout>
 
